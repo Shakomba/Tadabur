@@ -45,6 +45,9 @@ const AudioLessonsPage = {
         </div>
 
         <div class="max-w-6xl mx-auto px-4 py-8 md:py-12 ">
+          <div class="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-emerald-50 text-emerald-800 font-medium">
+            جوزئی ٣٠ (عم)
+          </div>
           <!-- Available Lessons -->
           ${withLessons.length > 0 ? `
           <section class="mb-12">

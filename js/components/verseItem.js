@@ -29,12 +29,12 @@ const VerseItem = {
 
         <div class="flex-1 min-w-0">
           <!-- Arabic Text -->
-          <p class="quran-text text-quran-md md:text-quran-lg text-gray-900 mb-4 leading-loose">
+          <p class="quran-text text-quran-lg md:text-quran-xl text-gray-900 mb-4 leading-loose">
             ${verse.textUthmani || verse.textArabic}
           </p>
 
           <!-- Tafsir -->
-          <p class="text-gray-600 text-base md:text-lg leading-relaxed">
+          <p class="text-gray-600 text-base md:text-lg leading-relaxed tafsir-text">
             ${verse.tafsirKurdish}
           </p>
         </div>
@@ -66,12 +66,12 @@ const VerseItem = {
 
           <div class="flex-1 min-w-0">
             <!-- Arabic Text -->
-            <p class="quran-text text-quran-md md:text-quran-lg text-gray-900 mb-4 leading-loose">
+            <p class="quran-text text-quran-lg md:text-quran-xl text-gray-900 mb-4 leading-loose">
               ${verse.textUthmani || verse.textArabic}
             </p>
 
             <!-- Tafsir -->
-            <p class="text-gray-600 text-base md:text-lg leading-relaxed">
+            <p class="text-gray-600 text-base md:text-lg leading-relaxed tafsir-text">
               ${verse.tafsirKurdish}
             </p>
           </div>

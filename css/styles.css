@@ -54,6 +54,14 @@ body {
   letter-spacing: 0.02em;
 }
 
+.verse-item .quran-text {
+  margin-top: -1.30rem;
+}
+
+.verse-item .tafsir-text {
+  margin-top: -1.25rem;
+}
+
 /* ===== Verse Container ===== */
 .verse-container {
   background: #faf6f0;
@@ -79,6 +87,22 @@ body {
 .verse-item.highlighted .verse-number {
   background-color: #064e3b;
   color: white;
+}
+
+.verse-item.verse-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(0.2);
+}
+
+.verse-item.verse-disabled .verse-number {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+}
+
+.lecture-accordion.is-active .lecture-header {
+  border-color: #d4a956;
+  box-shadow: 0 6px 18px rgba(6, 78, 59, 0.12);
 }
 
 /* ===== 3D Book Card ===== */
@@ -774,3 +798,4 @@ body {
   will-change: transform;
   transform: translateZ(0);
 }
+/* Using Amiri from Google Fonts (loaded in index.html) for Quran text */

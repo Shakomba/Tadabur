@@ -46,18 +46,45 @@ export const AudioSync = {
    * @returns {number} Index of active verse, or -1 if none
    */
   findActiveVerseIndex(currentTime) {
+    const hasTiming = this._verses.some((verse) => {
+      const start = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+      const end = Number.isFinite(verse.audioEndTimestamp) ? verse.audioEndTimestamp : verse.endTime;
+      return Number.isFinite(start) && (start > 0 || Number.isFinite(end));
+    });
+    if (!hasTiming) return -1;
+
+    let lastTimedIndex = -1;
     for (let i = 0; i < this._verses.length; i++) {
       const verse = this._verses[i];
-      if (currentTime >= verse.audioTimestamp &&
-          currentTime < verse.audioEndTimestamp) {
+      const start = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+      let end = Number.isFinite(verse.audioEndTimestamp) ? verse.audioEndTimestamp : verse.endTime;
+      if (!Number.isFinite(start)) {
+        continue;
+      }
+      if (!Number.isFinite(end) || end <= start) {
+        const nextVerse = this._verses[i + 1];
+        const nextStart = nextVerse
+          ? (Number.isFinite(nextVerse.audioTimestamp) ? nextVerse.audioTimestamp : nextVerse.startTime)
+          : null;
+        if (Number.isFinite(nextStart) && nextStart > start) {
+          end = nextStart;
+        }
+      }
+
+      lastTimedIndex = i;
+      if (Number.isFinite(end) && end > start && currentTime >= start && currentTime < end) {
         return i;
       }
     }
 
-    // If past all verses, return last one
-    if (this._verses.length > 0 &&
-        currentTime >= this._verses[this._verses.length - 1].audioTimestamp) {
-      return this._verses.length - 1;
+    // If past all timed verses, return the last timed one
+    if (lastTimedIndex >= 0) {
+      const lastStart = Number.isFinite(this._verses[lastTimedIndex].audioTimestamp)
+        ? this._verses[lastTimedIndex].audioTimestamp
+        : this._verses[lastTimedIndex].startTime;
+      if (Number.isFinite(lastStart) && currentTime >= lastStart) {
+        return lastTimedIndex;
+      }
     }
 
     return -1;
@@ -112,7 +139,10 @@ export const AudioSync = {
     }
 
     const verse = this._verses[verseIndex];
-    this._audioElement.currentTime = verse.audioTimestamp;
+    const start = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+    if (Number.isFinite(start)) {
+      this._audioElement.currentTime = start;
+    }
   },
 
   /**
@@ -124,7 +154,9 @@ export const AudioSync = {
     if (verseIndex < 0 || verseIndex >= this._verses.length) {
       return 0;
     }
-    return this._verses[verseIndex].audioTimestamp;
+    const verse = this._verses[verseIndex];
+    const timestamp = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+    return Number.isFinite(timestamp) ? timestamp : 0;
   },
 
   /**
@@ -157,11 +189,23 @@ export const AudioSync = {
 export function getVerseMarkers(verses, totalDuration) {
   if (!verses || !totalDuration) return [];
 
-  return verses.map((verse, index) => ({
-    index,
-    position: (verse.audioTimestamp / totalDuration) * 100,
-    verseNumber: verse.number
-  }));
+  const hasTiming = verses.some((verse) => {
+    const timestamp = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+    return Number.isFinite(timestamp) && timestamp > 0;
+  });
+  if (!hasTiming) return [];
+
+  const markers = [];
+  verses.forEach((verse, index) => {
+    const timestamp = Number.isFinite(verse.audioTimestamp) ? verse.audioTimestamp : verse.startTime;
+    if (!Number.isFinite(timestamp)) return;
+    markers.push({
+      index,
+      position: (timestamp / totalDuration) * 100,
+      verseNumber: verse.number ?? verse.numberInSurah ?? index + 1
+    });
+  });
+  return markers;
 }
 
 /**

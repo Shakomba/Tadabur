@@ -14,6 +14,11 @@ const ReadingViewPage = {
   container: null,
   surah: null,
   currentVerseIndex: -1,
+  hasLectures: false,
+  activeLectureId: null,
+  activeLectureSurah: null,
+  lectureVerseMap: {},
+  lectureMetaMap: {},
   unsubscribers: [],
 
   /**
@@ -24,6 +29,11 @@ const ReadingViewPage = {
   async mount(container, params) {
     this.container = container;
     this.currentVerseIndex = -1;
+    this.hasLectures = false;
+    this.activeLectureId = null;
+    this.activeLectureSurah = null;
+    this.lectureVerseMap = {};
+    this.lectureMetaMap = {};
 
     // Get surah data
     const surahId = parseInt(params.id);
@@ -34,14 +44,20 @@ const ReadingViewPage = {
       return;
     }
 
+    this.hasLectures = Array.isArray(this.surah.lectures) && this.surah.lectures.length > 0;
+
     // Set current surah in state
     State.set('currentSurah', this.surah);
 
     // Render page
     this.render();
 
-    // Load audio and set up sync
-    this._setupAudio();
+    if (this.hasLectures) {
+      this._setupLectureHandlers();
+    } else {
+      // Load audio and set up sync
+      this._setupAudio();
+    }
   },
 
   /**
@@ -50,6 +66,9 @@ const ReadingViewPage = {
   render() {
     const appData = State.get('appData');
     const strings = appData?.uiStrings || {};
+    const verseMarkup = this.hasLectures
+      ? this._renderLectures()
+      : this.surah.verses.map((verse, index) => this._renderVerse(verse, index)).join('');
 
     this.container.innerHTML = `
       <div class="min-h-screen bg-cream-50">
@@ -85,7 +104,7 @@ const ReadingViewPage = {
         <!-- Verses Container -->
         <div class="max-w-4xl mx-auto px-4 py-8 ">
           <div class="verse-container rounded-2xl p-6 md:p-8 shadow-sm" id="verses-container">
-            ${this.surah.verses.map((verse, index) => this._renderVerse(verse, index)).join('')}
+            ${verseMarkup}
           </div>
         </div>
       </div>
@@ -116,13 +135,101 @@ const ReadingViewPage = {
 
           <div class="flex-1 min-w-0">
             <!-- Arabic Text -->
-            <p class="quran-text text-quran-md md:text-quran-lg text-gray-900 mb-4 leading-loose">
+            <p class="quran-text text-quran-lg md:text-quran-xl text-gray-900 mb-4 leading-loose">
               ${verse.textUthmani || verse.textArabic}
             </p>
 
             <!-- Tafsir -->
-            <p class="text-gray-600 text-base md:text-lg leading-relaxed">
-              ${verse.tafsirKurdish}
+            <p class="text-gray-600 text-base md:text-lg leading-relaxed tafsir-text">
+              ${verse.tafsirKurdish || verse.textKurdish || ''}
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  /**
+   * Render lecture accordions for multi-lecture surahs
+   * @returns {string} HTML string
+   */
+  _renderLectures() {
+    const strings = State.get('appData')?.uiStrings || {};
+    const verseLabel = strings.verse || 'ئایەت';
+    const lectures = Array.isArray(this.surah.lectures) ? this.surah.lectures : [];
+
+    this.lectureVerseMap = {};
+    this.lectureMetaMap = {};
+
+    return lectures.map((lecture, index) => {
+      const lectureId = String(lecture.id ?? index + 1);
+      const startVerse = Number(lecture.startVerse ?? lecture.start ?? 1);
+      const endVerse = Number(lecture.endVerse ?? lecture.end ?? startVerse);
+      const verses = this._getLectureVerses(startVerse, endVerse);
+
+      this.lectureVerseMap[lectureId] = verses;
+      this.lectureMetaMap[lectureId] = {
+        ...lecture,
+        _index: index,
+        _startVerse: startVerse,
+        _endVerse: endVerse
+      };
+
+      const title = lecture.title || `وانە ${toKurdishNumber(index + 1)}`;
+      const rangeLabel = lecture.label || `${verseLabel} ${toKurdishNumber(startVerse)} - ${toKurdishNumber(endVerse)}`;
+
+      return `
+        <div class="lecture-accordion mb-4 last:mb-0" data-lecture-id="${lectureId}">
+          <div class="lecture-header flex items-center justify-between gap-3 p-4 rounded-xl bg-white/70 border border-cream-200">
+            <button class="lecture-toggle flex-1 text-right" data-lecture-toggle="${lectureId}" aria-expanded="false">
+              <div class="text-emerald-900 font-bold">${title}</div>
+              <div class="text-emerald-600 text-sm mt-1">${rangeLabel}</div>
+            </button>
+            <button class="lecture-play w-10 h-10 bg-gold-400 hover:bg-gold-300 rounded-full flex items-center justify-center transition-colors"
+                    data-lecture-play="${lectureId}" title="${strings.listenNow || 'گوشبکە'}" aria-label="Play lecture">
+              ${icon('play', 'w-5 h-5 text-emerald-900')}
+            </button>
+          </div>
+          <div class="lecture-body hidden pt-4" data-lecture-body="${lectureId}">
+            ${verses.map((verse, verseIndex) => this._renderLectureVerse(verse, verseIndex, lectureId)).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  _getLectureVerses(startVerse, endVerse) {
+    const verseNumber = (verse) => Number(verse.numberInSurah ?? verse.number ?? 0);
+    return this.surah.verses
+      .filter((verse) => {
+        const number = verseNumber(verse);
+        return number >= startVerse && number <= endVerse;
+      })
+      .sort((a, b) => verseNumber(a) - verseNumber(b));
+  },
+
+  _renderLectureVerse(verse, index, lectureId) {
+    return `
+      <div class="verse-item verse-disabled p-4 md:p-6 rounded-xl mb-4 last:mb-0"
+           data-lecture-id="${lectureId}"
+           data-verse-index="${index}">
+        <div class="flex items-start gap-4">
+          <!-- Verse Number -->
+          <div class="verse-number w-10 h-10 md:w-12 md:h-12 bg-emerald-100 text-emerald-800
+                      rounded-full flex items-center justify-center font-bold text-lg
+                      flex-shrink-0 transition-colors">
+            ${toKurdishNumber(verse.numberInSurah ?? verse.number)}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <!-- Arabic Text -->
+            <p class="quran-text text-quran-lg md:text-quran-xl text-gray-900 mb-4 leading-loose">
+              ${verse.textUthmani || verse.textArabic}
+            </p>
+
+            <!-- Tafsir -->
+            <p class="text-gray-600 text-base md:text-lg leading-relaxed tafsir-text">
+              ${verse.tafsirKurdish || verse.textKurdish || ''}
             </p>
           </div>
         </div>
@@ -155,10 +262,101 @@ const ReadingViewPage = {
     const verses = this.container.querySelectorAll('.verse-item');
     verses.forEach(verse => {
       verse.addEventListener('click', () => {
-        const index = parseInt(verse.dataset.verseIndex);
+        if (verse.classList.contains('verse-disabled')) return;
+        const index = parseInt(verse.dataset.verseIndex, 10);
+        const lectureId = verse.dataset.lectureId || null;
+        if (this.hasLectures && lectureId !== this.activeLectureId) return;
         this._seekToVerse(index);
       });
     });
+  },
+
+  _setupLectureHandlers() {
+    const toggles = this.container.querySelectorAll('[data-lecture-toggle]');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const lectureId = toggle.dataset.lectureToggle;
+        this._toggleLecture(lectureId);
+      });
+    });
+
+    const plays = this.container.querySelectorAll('[data-lecture-play]');
+    plays.forEach(playButton => {
+      playButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lectureId = playButton.dataset.lecturePlay;
+        this._playLecture(lectureId);
+      });
+    });
+
+    this._setupVerseClickHandlers();
+  },
+
+  _toggleLecture(lectureId) {
+    const accordion = this.container.querySelector(`.lecture-accordion[data-lecture-id="${lectureId}"]`);
+    if (!accordion) return;
+    const body = accordion.querySelector(`[data-lecture-body="${lectureId}"]`);
+    const toggle = accordion.querySelector(`[data-lecture-toggle="${lectureId}"]`);
+    const isOpen = accordion.classList.toggle('is-open');
+    if (body) {
+      body.classList.toggle('hidden', !isOpen);
+    }
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    }
+  },
+
+  _openLecture(lectureId) {
+    const accordion = this.container.querySelector(`.lecture-accordion[data-lecture-id="${lectureId}"]`);
+    if (!accordion) return;
+    accordion.classList.add('is-open');
+    const body = accordion.querySelector(`[data-lecture-body="${lectureId}"]`);
+    const toggle = accordion.querySelector(`[data-lecture-toggle="${lectureId}"]`);
+    if (body) body.classList.remove('hidden');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  },
+
+  _setActiveLecture(lectureId) {
+    this.activeLectureId = lectureId;
+    this.container.querySelectorAll('.lecture-accordion').forEach(accordion => {
+      const isActive = accordion.dataset.lectureId === lectureId;
+      accordion.classList.toggle('is-active', isActive);
+      accordion.querySelectorAll('.verse-item').forEach(verse => {
+        verse.classList.toggle('verse-disabled', !isActive);
+      });
+    });
+  },
+
+  _playLecture(lectureId) {
+    const lecture = this.lectureMetaMap[lectureId];
+    if (!lecture) return;
+
+    this._openLecture(lectureId);
+    this._setActiveLecture(lectureId);
+
+    const lectureSurah = this._buildLectureSurah(lectureId, lecture);
+    this.activeLectureSurah = lectureSurah;
+
+    AudioPlayer.loadSurah(lectureSurah);
+
+    const audioElement = document.getElementById('audio-element');
+    if (audioElement) {
+      AudioSync.init(audioElement, lectureSurah.verses, (verseIndex) => {
+        this._onVerseChange(verseIndex);
+      });
+    }
+
+    AudioPlayer.play();
+  },
+
+  _buildLectureSurah(lectureId, lecture) {
+    const verses = this.lectureVerseMap[lectureId] || [];
+    return {
+      ...this.surah,
+      audioUrl: lecture.audioUrl || this.surah.audioUrl,
+      audioDuration: lecture.audioDuration || 0,
+      verses
+    };
   },
 
   /**
@@ -166,6 +364,30 @@ const ReadingViewPage = {
    * @param {number} verseIndex - New verse index
    */
   _onVerseChange(verseIndex) {
+    if (verseIndex === this.currentVerseIndex && !this.hasLectures) return;
+
+    if (this.hasLectures) {
+      if (!this.activeLectureId || !this.activeLectureSurah) return;
+
+      this.container.querySelectorAll('.verse-item.highlighted').forEach((element) => {
+        element.classList.remove('highlighted');
+      });
+
+      if (verseIndex >= 0) {
+        const selector = `.verse-item[data-lecture-id="${this.activeLectureId}"][data-verse-index="${verseIndex}"]`;
+        const newVerse = this.container.querySelector(selector);
+        if (newVerse) {
+          newVerse.classList.add('highlighted');
+          this._scrollToVerse(newVerse);
+        }
+      }
+
+      this.currentVerseIndex = verseIndex;
+      State.set('currentVerseIndex', verseIndex);
+      AudioPlayer.updateVerseInfo(verseIndex, this.activeLectureSurah);
+      return;
+    }
+
     if (verseIndex === this.currentVerseIndex) return;
 
     // Remove highlight from previous verse
@@ -199,6 +421,7 @@ const ReadingViewPage = {
    * @param {number} verseIndex - Verse index to seek to
    */
   _seekToVerse(verseIndex) {
+    if (this.hasLectures && !this.activeLectureId) return;
     AudioSync.seekToVerse(verseIndex);
     AudioPlayer.play();
   },
