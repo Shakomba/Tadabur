@@ -138,6 +138,10 @@ body {
   transform: translateY(0);
 }
 
+.audio-bar.is-swiping {
+  transition: none;
+}
+
 /* ===== Progress Bar ===== */
 .progress-track {
   cursor: pointer;
@@ -150,7 +154,7 @@ body {
 
 .progress-handle {
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, box-shadow 0.2s;
 }
 
 .progress-track:hover .progress-handle {
@@ -163,6 +167,16 @@ body {
 
 .progress-track.is-dragging .progress-handle {
   opacity: 1;
+}
+
+.progress-track.snap-active .progress-handle {
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(212, 169, 86, 0.45),
+              0 0 12px rgba(212, 169, 86, 0.35);
+}
+
+.progress-track.snap-active .progress-fill {
+  box-shadow: 0 0 8px rgba(212, 169, 86, 0.35);
 }
 
 /* ===== Navigation Tab ===== */
@@ -558,14 +572,16 @@ body {
 .audio-fab {
   position: fixed;
   bottom: 1.5rem;
-  left: 1.5rem;
+  right: 1.5rem;
+  left: auto;
   z-index: 1000;
 }
 
 @media (max-width: 768px) {
   .audio-fab {
     bottom: 1rem;
-    left: 1rem;
+    right: 1rem;
+    left: auto;
   }
 }
 

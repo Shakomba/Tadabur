@@ -54,24 +54,23 @@ const ReadingViewPage = {
     this.container.innerHTML = `
       <div class="min-h-screen bg-cream-50">
         <!-- Header -->
-        <div class="bg-cream-50 text-white py-6">
+        <div class="bg-cream-50 text-emerald-900 py-6">
           <div class="max-w-4xl mx-auto px-4">
             <div class="flex items-center gap-4">
               <!-- Back Button -->
               <a href="#/audio-lessons"
-                 class="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg
+                 class="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 text-cream-50 rounded-lg
                         flex items-center justify-center transition-colors">
                 ${icon('chevronRight', 'w-5 h-5')}
               </a>
 
               <div class="flex-1">
-                <h1 class="text-2xl font-bold">سورەتی ${this.surah.nameKurdish}</h1>
-                <div class="flex items-center gap-3 text-emerald-200 text-sm mt-1">
-                  <span class="font-quran text-lg">${this.surah.nameArabic}</span>
-                  <span>•</span>
-                  <span>${this.surah.revelationType}</span>
-                  <span>•</span>
-                  <span>${toKurdishNumber(this.surah.verseCount)} ${strings.verse || 'ئایەت'}</span>
+                <div class="flex flex-wrap items-center gap-2 text-emerald-700 text-sm md:text-base">
+                  <span class="font-quran text-lg md:text-xl text-emerald-800">${this.surah.nameArabic}</span>
+                  <span class="text-emerald-400">•</span>
+                  <span class="font-medium">${this.surah.revelationType}</span>
+                  <span class="text-emerald-400">•</span>
+                  <span class="font-medium">${toKurdishNumber(this.surah.verseCount)} ${strings.verse || 'ئایەت'}</span>
                 </div>
               </div>
 

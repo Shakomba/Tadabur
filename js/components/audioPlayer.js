@@ -10,8 +10,16 @@ import { formatDuration, toKurdishNumber } from '../utils/formatters.js';
 const AudioPlayer = {
   container: null,
   audioElement: null,
+  currentSurah: null,
   isVisible: false,
+  isMinimized: false,
   isSeeking: false,
+  isSwiping: false,
+  swipeStartX: 0,
+  swipeStartY: 0,
+  swipeCurrentY: 0,
+  lastSnapIndex: null,
+  markers: [],
   speedOptions: [0.5, 0.75, 1, 1.25, 1.5, 2],
   currentSpeed: 1,
 
@@ -37,30 +45,49 @@ const AudioPlayer = {
 
     this.container.innerHTML = `
       <div class="audio-bar py-2 px-4">
-        <div class="max-w-7xl mx-auto">
+        <div class="audio-bar-inner relative w-full">
+          <div class="audio-window-controls absolute -top-2 -right-4 hidden md:flex items-center gap-2 z-10" dir="ltr">
+            <button id="minimize-btn" class="w-8 h-8 flex items-center justify-center text-gold-400
+                                            hover:text-gold-300 transition-colors group"
+                    title="Minimize" aria-label="Minimize player">
+              <span class="block w-4 h-0.5 bg-gold-400 group-hover:bg-gold-300" aria-hidden="true"></span>
+            </button>
+            <button id="close-btn" class="w-8 h-8 flex items-center justify-center text-gold-400
+                                         hover:text-gold-300 transition-colors"
+                    title="Close" aria-label="Close player">
+              ${icon('close', 'w-4 h-4')}
+            </button>
+          </div>
+          <div class="max-w-7xl mx-auto">
           <!-- Top Row: Progress Bar with Times -->
           <div class="flex items-center gap-3 mb-2">
-            <!-- Current Time (Left) -->
-            <span class="text-white text-sm tabular-nums shrink-0" id="current-time">٠٠:٠٠</span>
+            <!-- Duration (Left) -->
+            <span class="text-emerald-300 text-sm tabular-nums shrink-0" id="duration">٠٠:٠٠</span>
 
             <!-- Progress Bar (Center - draggable) -->
             <div class="flex-1 progress-track h-1 bg-emerald-800 rounded-full relative cursor-pointer" id="progress-track" dir="ltr">
               <div class="progress-fill h-full bg-gold-400 rounded-full pointer-events-none" id="progress-fill" style="width: 0%"></div>
-              <div class="progress-handle absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-gold-400 rounded-full shadow-md cursor-grab active:cursor-grabbing"
+              <div class="progress-handle absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-gold-400 rounded-full shadow-md cursor-pointer"
                    id="progress-handle" style="left: 0%; transform: translate(-50%, -50%)"></div>
               <!-- Verse Markers -->
               <div id="verse-markers" class="absolute inset-0 pointer-events-none"></div>
             </div>
 
-            <!-- Duration (Right) -->
-            <span class="text-emerald-300 text-sm tabular-nums shrink-0" id="duration">٠٠:٠٠</span>
+            <!-- Current Time (Right) -->
+            <span class="text-white text-sm tabular-nums shrink-0" id="current-time">٠٠:٠٠</span>
           </div>
 
           <!-- Bottom Row: Controls & Info -->
           <div class="flex items-center justify-between gap-4">
             <!-- Left: Surah Info -->
             <div class="flex items-center gap-2 flex-1">
-              <div class="w-8 h-8 bg-emerald-800 rounded-lg flex items-center justify-center shrink-0">
+              <button id="close-btn-mobile" class="w-8 h-8 bg-emerald-800 rounded-lg flex items-center
+                                                   justify-center shrink-0 text-gold-400 hover:bg-emerald-700
+                                                   transition-colors md:hidden"
+                      title="Close" aria-label="Close player">
+                ${icon('close', 'w-4 h-4')}
+              </button>
+              <div class="w-8 h-8 bg-emerald-800 rounded-lg hidden md:flex items-center justify-center shrink-0">
                 ${icon('volume', 'w-4 h-4 text-gold-400')}
               </div>
               <div class="hidden md:block min-w-0 max-w-[200px]">
@@ -117,6 +144,22 @@ const AudioPlayer = {
           </div>
         </div>
       </div>
+      </div>
+      <div id="audio-fab" class="audio-fab hidden group">
+        <button id="fab-btn" class="relative w-14 h-14 bg-emerald-800 text-gold-400 rounded-full
+                                     shadow-lg flex items-center justify-center hover:bg-emerald-700 transition-colors"
+                title="Open player" aria-label="Open player">
+          <span class="fab-ring absolute inset-0 rounded-full border border-gold-400/40 pointer-events-none"></span>
+          <span id="fab-play-icon" class="relative">${icon('play', 'w-5 h-5')}</span>
+          <span id="fab-pause-icon" class="relative hidden">${icon('pause', 'w-5 h-5')}</span>
+        </button>
+        <div class="fab-tooltip absolute bottom-full mb-2 right-0 bg-emerald-900 text-white text-xs
+                    px-2 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100
+                    transition-opacity pointer-events-none">
+          <div id="fab-surah-name">—</div>
+          <div id="fab-verse-info" class="text-emerald-300">—</div>
+        </div>
+      </div>
     `;
   },
 
@@ -170,6 +213,7 @@ const AudioPlayer = {
       const startSeek = (e) => {
         if (e.button !== undefined && e.button !== 0) return;
         this.isSeeking = true;
+        this.lastSnapIndex = null;
         progressTrack.classList.add('is-dragging');
         document.body.style.userSelect = 'none';
         if (progressTrack.setPointerCapture) {
@@ -187,6 +231,7 @@ const AudioPlayer = {
         if (!this.isSeeking) return;
         this.isSeeking = false;
         progressTrack.classList.remove('is-dragging');
+        progressTrack.classList.remove('snap-active');
         document.body.style.userSelect = '';
         if (progressTrack.hasPointerCapture &&
             progressTrack.hasPointerCapture(e.pointerId) &&
@@ -209,6 +254,31 @@ const AudioPlayer = {
         this.setSpeed(speed);
       });
     });
+
+    const minimizeBtn = $('#minimize-btn', this.container);
+    if (minimizeBtn) {
+      minimizeBtn.addEventListener('click', () => this.minimize());
+    }
+
+    const closeBtn = $('#close-btn', this.container);
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.close());
+    }
+
+    const closeBtnMobile = $('#close-btn-mobile', this.container);
+    if (closeBtnMobile) {
+      closeBtnMobile.addEventListener('click', () => this.close());
+    }
+
+    const fabBtn = $('#fab-btn', this.container);
+    if (fabBtn) {
+      fabBtn.addEventListener('click', () => this.restore());
+    }
+
+    const audioBar = this.container.querySelector('.audio-bar');
+    if (audioBar) {
+      this._setupSwipeToClose(audioBar);
+    }
   },
 
   /**
@@ -218,6 +288,7 @@ const AudioPlayer = {
   loadSurah(surah) {
     if (!this.audioElement || !surah.audioUrl) return;
 
+    this.currentSurah = surah;
     this.audioElement.src = surah.audioUrl;
     this.audioElement.load();
 
@@ -225,6 +296,10 @@ const AudioPlayer = {
     const surahName = $('#surah-name', this.container);
     if (surahName) {
       surahName.textContent = `سورەتی ${surah.nameKurdish}`;
+    }
+    const fabSurahName = $('#fab-surah-name', this.container);
+    if (fabSurahName) {
+      fabSurahName.textContent = `سورەتی ${surah.nameKurdish}`;
     }
 
     // Update state
@@ -260,6 +335,8 @@ const AudioPlayer = {
     if (!container || !verses || !duration) return;
 
     const markers = getVerseMarkers(verses, duration);
+    this.markers = markers;
+    this.lastSnapIndex = null;
 
     container.innerHTML = markers.map(marker => `
       <div class="absolute top-0 bottom-0 w-0.5 bg-emerald-600 opacity-50 hover:opacity-100
@@ -281,6 +358,7 @@ const AudioPlayer = {
         const verseIndex = parseInt(marker.dataset.verse, 10);
         const verseTime = AudioSync.getVerseTimestamp(verseIndex);
         this.seekTo(verseTime);
+        this._hapticTick(8);
         this.play();
       });
     });
@@ -304,6 +382,9 @@ const AudioPlayer = {
    */
   play() {
     if (!this.audioElement) return;
+    if (!this.isVisible && !this.isMinimized) {
+      this.restore();
+    }
     this.audioElement.play().catch(err => {
       console.error('Error playing audio:', err);
     });
@@ -351,6 +432,85 @@ const AudioPlayer = {
     State.updateAudioState({ speed });
   },
 
+  _setupSwipeToClose(audioBar) {
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+    const shouldIgnoreSwipe = (target) =>
+      target.closest('#progress-track') ||
+      target.closest('button') ||
+      target.closest('.speed-dropdown');
+
+    const start = (e) => {
+      if (!this.isVisible || !isMobile()) return;
+      if (shouldIgnoreSwipe(e.target)) return;
+      if (e.touches.length > 1) return;
+      const touch = e.touches[0];
+      this.isSwiping = true;
+      this.swipeStartX = touch.clientX;
+      this.swipeStartY = touch.clientY;
+      this.swipeCurrentY = touch.clientY;
+      audioBar.classList.add('is-swiping');
+    };
+
+    const move = (e) => {
+      if (!this.isSwiping || !isMobile()) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - this.swipeStartX;
+      const deltaY = touch.clientY - this.swipeStartY;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+      if (deltaY < 0) return;
+      this.swipeCurrentY = touch.clientY;
+      audioBar.style.transform = `translateY(${deltaY}px)`;
+      e.preventDefault();
+    };
+
+    const end = () => {
+      if (!this.isSwiping) return;
+      const deltaY = this.swipeCurrentY - this.swipeStartY;
+      this.isSwiping = false;
+      audioBar.classList.remove('is-swiping');
+      audioBar.style.transform = '';
+      if (deltaY > 60) {
+        this.close();
+        this._hapticTick(15);
+      }
+    };
+
+    audioBar.addEventListener('touchstart', start, { passive: true });
+    audioBar.addEventListener('touchmove', move, { passive: false });
+    audioBar.addEventListener('touchend', end);
+    audioBar.addEventListener('touchcancel', end);
+  },
+
+  _hapticTick(duration = 8) {
+    if (navigator.vibrate) {
+      navigator.vibrate(duration);
+    }
+  },
+
+  _getSnap(positionPx, trackWidth, duration) {
+    if (!this.markers.length || !trackWidth || !duration) return null;
+
+    const isDesktop = !window.matchMedia('(max-width: 768px)').matches;
+    let closest = null;
+    for (const marker of this.markers) {
+      const markerTime = AudioSync.getVerseTimestamp(marker.index);
+      const markerPx = (marker.position / 100) * trackWidth;
+      const distance = Math.abs(positionPx - markerPx);
+      if (!closest || distance < closest.distance) {
+        closest = { marker, distance, time: markerTime };
+      }
+    }
+
+    const thresholdPx = isDesktop
+      ? Math.max(3, trackWidth * 0.003)
+      : Math.max(1.5, trackWidth * 0.0015);
+    if (!closest || closest.distance > thresholdPx) return null;
+
+    const time = Math.max(0, Math.min(duration, closest.time));
+    const progress = Math.max(0, Math.min(100, closest.marker.position));
+    return { time, progress, index: closest.marker.index, distance: closest.distance };
+  },
+
   /**
    * Seek audio from pointer position on progress bar
    * @param {PointerEvent|MouseEvent|TouchEvent} e - Pointer event
@@ -367,11 +527,30 @@ const AudioPlayer = {
 
     // LTR: calculate from left side (progress bar fills left to right)
     const position = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+    const duration = this.audioElement.duration;
     const ratio = rect.width ? position / rect.width : 0;
-    const newTime = ratio * this.audioElement.duration;
+    let newTime = ratio * duration;
+    let progress = ratio * 100;
 
-    this.audioElement.currentTime = Math.max(0, Math.min(this.audioElement.duration, newTime));
-    this._updateProgressUI(ratio * 100, this.audioElement.currentTime);
+    const snap = this._getSnap(position, rect.width, duration);
+    if (snap) {
+      track.classList.toggle('snap-active', true);
+      newTime = snap.time;
+      progress = snap.progress;
+      const hapticThreshold = Math.max(1, rect.width * 0.001);
+      if (snap.index !== this.lastSnapIndex && snap.distance <= hapticThreshold) {
+        this._hapticTick(6);
+        this.lastSnapIndex = snap.index;
+      } else if (snap.distance > hapticThreshold) {
+        this.lastSnapIndex = null;
+      }
+    } else {
+      track.classList.toggle('snap-active', false);
+      this.lastSnapIndex = null;
+    }
+
+    this.audioElement.currentTime = Math.max(0, Math.min(duration, newTime));
+    this._updateProgressUI(progress, this.audioElement.currentTime);
     State.updateAudioState({ currentTime: this.audioElement.currentTime });
   },
 
@@ -435,6 +614,11 @@ const AudioPlayer = {
       durationEl.textContent = formatDuration(this.audioElement.duration);
     }
 
+
+    if (this.currentSurah?.verses?.length) {
+      this._renderVerseMarkers(this.currentSurah.verses, this.audioElement.duration);
+    }
+
     State.updateAudioState({
       duration: this.audioElement.duration
     });
@@ -453,6 +637,17 @@ const AudioPlayer = {
       pauseIcon.classList.toggle('hidden', !playing);
     }
 
+    const fab = $('#audio-fab', this.container);
+    if (fab) {
+      fab.classList.toggle('fab-playing', playing);
+    }
+    const fabPlayIcon = $('#fab-play-icon', this.container);
+    const fabPauseIcon = $('#fab-pause-icon', this.container);
+    if (fabPlayIcon && fabPauseIcon) {
+      fabPlayIcon.classList.toggle('hidden', playing);
+      fabPauseIcon.classList.toggle('hidden', !playing);
+    }
+
     State.updateAudioState({ playing });
   },
 
@@ -463,11 +658,18 @@ const AudioPlayer = {
    */
   updateVerseInfo(verseIndex, surah) {
     const verseInfo = $('#verse-info', this.container);
-    if (!verseInfo || verseIndex < 0 || !surah) return;
+    if (verseIndex < 0 || !surah) return;
 
     const verse = surah.verses[verseIndex];
     if (verse) {
-      verseInfo.textContent = `ئایەتی ${toKurdishNumber(verse.number)} لە ${toKurdishNumber(surah.verseCount)}`;
+      const verseText = `ئایەتی ${toKurdishNumber(verse.number)} لە ${toKurdishNumber(surah.verseCount)}`;
+      if (verseInfo) {
+        verseInfo.textContent = verseText;
+      }
+      const fabVerseInfo = $('#fab-verse-info', this.container);
+      if (fabVerseInfo) {
+        fabVerseInfo.textContent = verseText;
+      }
     }
   },
 
@@ -475,21 +677,7 @@ const AudioPlayer = {
    * Show audio player
    */
   show() {
-    if (this.isVisible) return;
-
-    // Find the .audio-bar element inside the container
-    const audioBar = this.container.querySelector('.audio-bar');
-    if (audioBar) {
-      audioBar.classList.add('visible');
-    }
-
-    this.isVisible = true;
-
-    // Add padding to main content
-    const mainContent = document.getElementById('app-content');
-    if (mainContent) {
-      mainContent.style.paddingBottom = '120px';
-    }
+    this.restore();
   },
 
   /**
@@ -497,19 +685,82 @@ const AudioPlayer = {
    */
   hide() {
     if (!this.isVisible) return;
-
-    // Find the .audio-bar element inside the container
-    const audioBar = this.container.querySelector('.audio-bar');
-    if (audioBar) {
-      audioBar.classList.remove('visible');
-    }
-
+    this._setBarVisible(false);
     this.isVisible = false;
+    this._setContentPadding(false);
+  },
 
-    // Remove padding from main content
+  /**
+   * Minimize audio player to FAB
+   */
+  minimize() {
+    if (!this.isVisible) return;
+    this._setBarVisible(false);
+    this._setFabVisible(true);
+    this.isVisible = false;
+    this.isMinimized = true;
+    this._setContentPadding(false);
+  },
+
+  /**
+   * Restore audio player from FAB
+   */
+  restore() {
+    this._setBarVisible(true);
+    this._setFabVisible(false);
+    this.isVisible = true;
+    this.isMinimized = false;
+    this._setContentPadding(true);
+  },
+
+  /**
+   * Close and stop audio playback
+   */
+  close() {
+    if (this.audioElement) {
+      this.audioElement.pause();
+    }
+    AudioSync.updateVerses([]);
+    if (this.audioElement) {
+      this.audioElement.currentTime = 0;
+    }
+    this.currentSurah = null;
+
+    this._setBarVisible(false);
+    this._setFabVisible(false);
+    this.isVisible = false;
+    this.isMinimized = false;
+    this._setContentPadding(false);
+
+    document.querySelectorAll('.verse-item.highlighted, .active-ayah').forEach((element) => {
+      element.classList.remove('highlighted', 'active-ayah');
+    });
+    State.set('currentVerseIndex', -1);
+
+    State.updateAudioState({
+      playing: false,
+      currentTime: 0
+    });
+  },
+
+  _setBarVisible(visible) {
+    const audioBar = this.container?.querySelector('.audio-bar');
+    if (audioBar) {
+      audioBar.classList.toggle('visible', visible);
+    }
+  },
+
+  _setFabVisible(visible) {
+    const fab = $('#audio-fab', this.container);
+    if (fab) {
+      fab.classList.toggle('hidden', !visible);
+    }
+  },
+
+  _setContentPadding(enabled) {
     const mainContent = document.getElementById('app-content');
     if (mainContent) {
-      mainContent.style.paddingBottom = '';
+      mainContent.style.paddingBottom = enabled ? '120px' : '';
     }
   },
 
@@ -529,6 +780,9 @@ const AudioPlayer = {
       this.audioElement.pause();
       this.audioElement.src = '';
     }
+    AudioSync.destroy();
+    this.isVisible = false;
+    this.isMinimized = false;
     this.container.innerHTML = '';
   }
 };
