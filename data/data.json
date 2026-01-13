@@ -1,0 +1,401 @@
+{
+  "meta": {
+    "appName": "تەدەبوری قورئان",
+    "appNameLatin": "Tadaburi Quran",
+    "tagline": "تەفسیرکردنی قوڕئان بەپێی مەنهەجی سەلەف و زمانی عەرەبی؛ گەشتێک بۆ قوڵبوونەوە لە پەیامی خودا.",
+    "version": "1.0.0"
+  },
+
+  "socialLinks": {
+    "telegram": "https://t.me/t_qur4n",
+    "youtube": "https://www.youtube.com/@TadaburyQuran"
+  },
+
+  "teacher": {
+    "name": "مامۆستا سیروان حامد",
+    "nameTranslit": "Mr. Sirwan Hamed",
+    "methodology": "لە ژێر ڕۆشنایی بنەماکانی سەلەف بۆ تەفسیرکردنی قوڕئانی پیرۆز کە بریتیین لە تەفسیرکردنی قوڕئان بە قوڕئان، تەفسیرکردنی قوڕئان بە فەرموودە، تەفسیرکردنی قوڕئان بە تێگەیشتنی سەلەف لە قوڕئان و، زانینی زمانی عەرەبی دەست پێ دەکەین، بە گەڕانەوە بۆ سەرچاوەکانی تەفسیر و تەدەبوری قوڕئان.",
+    "lessonStyle": [
+      "ماناکردنی وشەکان بەجیا و دەرخستنی هەندێک لە سوود و حیکمەتەکانی.",
+      "تەفسیرکردنی ئایەتەکان بە گشتی و تەدەبورکردن لێیان.",
+      "ڕوونکردنەوە و سەرنج خستنە سەر بابەتە فیقهییەکان.",
+      "گرنگیدان بە قیرائاتی عەشر بۆ تەفسیرکردنی هەندێک لە وشەکان کە بە بەشێک لە تەفسیرکردنی قوڕئان بە قوڕئان دادەنرێت."
+    ],
+    "bio": "ماموستا سیروان حامد، خوێندکاری زانستی شەرعی و قوڕئانی پیرۆز، لە ساڵی ٢٠١٥ەوە خەریکی فێرکردن و بڵاوکردنەوەی زانستی تەفسیر و تەدەبوری قوڕئانە بە شێوەیەکی ئەکادیمی و ئاسان."
+  },
+
+  "surahs": [
+    {
+      "id": 1,
+      "number": 1,
+      "nameArabic": "الفاتحة",
+      "nameKurdish": "فاتحە",
+      "meaningKurdish": "کردنەوە",
+      "verseCount": 7,
+      "revelationType": "مەککی",
+      "juz": 1,
+      "audioUrl": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/001.mp3",
+      "audioDuration": 47,
+      "hasLessons": true,
+      "verses": [
+        {
+          "number": 1,
+          "textArabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+          "textUthmani": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+          "tafsirKurdish": "بە ناوی خوای بەخشندە و میهرەبان دەست پێ دەکەم. «بسملە» کلیلی هەموو کارێکی چاکە و بارکودانی خوا بۆ سەر هەموو کاروبارەکان.",
+          "audioTimestamp": 0,
+          "audioEndTimestamp": 7
+        },
+        {
+          "number": 2,
+          "textArabic": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+          "textUthmani": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ",
+          "tafsirKurdish": "ستایش و سوپاس تایبەتە بە خوای گەورە کە پەروەردگاری هەموو بوونەوەرەکانە، مرۆڤ و فریشتە و گیانلەبەر و هەموو داهێنراوەکان.",
+          "audioTimestamp": 7,
+          "audioEndTimestamp": 13
+        },
+        {
+          "number": 3,
+          "textArabic": "الرَّحْمَٰنِ الرَّحِيمِ",
+          "textUthmani": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+          "tafsirKurdish": "ئەو خوایەی کە ڕەحمەتەکەی گشتگیرە بۆ هەموو بوونەوەرەکان، و ڕەحمەتی تایبەتی هەیە بۆ باوەڕداران.",
+          "audioTimestamp": 13,
+          "audioEndTimestamp": 18
+        },
+        {
+          "number": 4,
+          "textArabic": "مَالِكِ يَوْمِ الدِّينِ",
+          "textUthmani": "مَٰلِكِ يَوۡمِ ٱلدِّينِ",
+          "tafsirKurdish": "خاوەنی ڕۆژی ڕاستودروستی و حیساب و کتێب، ئەو ڕۆژەی کە هەموو کەس بەرپرسیارە لەبەردەم خوادا.",
+          "audioTimestamp": 18,
+          "audioEndTimestamp": 23
+        },
+        {
+          "number": 5,
+          "textArabic": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+          "textUthmani": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ",
+          "tafsirKurdish": "تەنها تۆ دەپەرستین و تەنها لە تۆ یارمەتی دەخوازین. ئەمە بەندەیەتی تەواوە بۆ خوای تاک، داواکردنی هاوکاری تەنها لە خوا.",
+          "audioTimestamp": 23,
+          "audioEndTimestamp": 29
+        },
+        {
+          "number": 6,
+          "textArabic": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+          "textUthmani": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ",
+          "tafsirKurdish": "ڕێنماییمان بکە بۆ ڕێگای ڕاست، ئەو ڕێگایەی کە ناڕەوا و لادان تێدا نییە، ڕێگای ئیسلام و قوڕئان.",
+          "audioTimestamp": 29,
+          "audioEndTimestamp": 36
+        },
+        {
+          "number": 7,
+          "textArabic": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+          "textUthmani": "صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ",
+          "tafsirKurdish": "ڕێگای ئەوانەی نیعمەتت بەخشیوە بەسەریاندا، نەک ڕێگای ئەوانەی کە تووڕەیی تۆیان لەسەرە (جوولەکەکان)، و نەک ڕێگای گومڕابووان (مەسیحییەکان).",
+          "audioTimestamp": 36,
+          "audioEndTimestamp": 47
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "number": 2,
+      "nameArabic": "البقرة",
+      "nameKurdish": "بەقەرە",
+      "meaningKurdish": "مانگا",
+      "verseCount": 286,
+      "revelationType": "مەدەنی",
+      "juz": 1,
+      "audioUrl": "",
+      "audioDuration": 0,
+      "hasLessons": false,
+      "verses": []
+    },
+    {
+      "id": 3,
+      "number": 3,
+      "nameArabic": "آل عمران",
+      "nameKurdish": "ئالی عیمران",
+      "meaningKurdish": "خێزانی عیمران",
+      "verseCount": 200,
+      "revelationType": "مەدەنی",
+      "juz": 3,
+      "audioUrl": "",
+      "audioDuration": 0,
+      "hasLessons": false,
+      "verses": []
+    },
+    {
+      "id": 112,
+      "number": 112,
+      "nameArabic": "الإخلاص",
+      "nameKurdish": "ئیخلاس",
+      "meaningKurdish": "تەنها پەرستن",
+      "verseCount": 4,
+      "revelationType": "مەککی",
+      "juz": 30,
+      "audioUrl": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/112.mp3",
+      "audioDuration": 15,
+      "hasLessons": true,
+      "verses": [
+        {
+          "number": 1,
+          "textArabic": "قُلْ هُوَ اللَّهُ أَحَدٌ",
+          "textUthmani": "قُلۡ هُوَ ٱللَّهُ أَحَدٌ",
+          "tafsirKurdish": "بڵێ: ئەو خوایە، یەکەو تاکە.",
+          "audioTimestamp": 0,
+          "audioEndTimestamp": 4
+        },
+        {
+          "number": 2,
+          "textArabic": "اللَّهُ الصَّمَدُ",
+          "textUthmani": "ٱللَّهُ ٱلصَّمَدُ",
+          "tafsirKurdish": "خوا بێ‌پێویست و سەرچاوەی هەموو پێویستییەکانە.",
+          "audioTimestamp": 4,
+          "audioEndTimestamp": 7
+        },
+        {
+          "number": 3,
+          "textArabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+          "textUthmani": "لَمۡ يَلِدۡ وَلَمۡ يُولَدۡ",
+          "tafsirKurdish": "نە منداڵی بووە و نە منداڵی کەسیشە.",
+          "audioTimestamp": 7,
+          "audioEndTimestamp": 11
+        },
+        {
+          "number": 4,
+          "textArabic": "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+          "textUthmani": "وَلَمۡ يَكُن لَّهُۥ كُفُوًا أَحَدُۢ",
+          "tafsirKurdish": "و هیچ کەس هاوتا و لێکچووی ئەو نییە.",
+          "audioTimestamp": 11,
+          "audioEndTimestamp": 15
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "number": 113,
+      "nameArabic": "الفلق",
+      "nameKurdish": "فەلەق",
+      "meaningKurdish": "بەیانی",
+      "verseCount": 5,
+      "revelationType": "مەککی",
+      "juz": 30,
+      "audioUrl": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/113.mp3",
+      "audioDuration": 19,
+      "hasLessons": true,
+      "verses": [
+        {
+          "number": 1,
+          "textArabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+          "textUthmani": "قُلۡ أَعُوذُ بِرَبِّ ٱلۡفَلَقِ",
+          "tafsirKurdish": "بڵێ: پەنا دەبەم بۆ پەروەردگاری بەیانی.",
+          "audioTimestamp": 0,
+          "audioEndTimestamp": 4
+        },
+        {
+          "number": 2,
+          "textArabic": "مِن شَرِّ مَا خَلَقَ",
+          "textUthmani": "مِن شَرِّ مَا خَلَقَ",
+          "tafsirKurdish": "لە خراپەی هەموو داهێنراوەکان.",
+          "audioTimestamp": 4,
+          "audioEndTimestamp": 7
+        },
+        {
+          "number": 3,
+          "textArabic": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+          "textUthmani": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+          "tafsirKurdish": "و لە خراپەی تاریکی کاتێک دێتە ناو.",
+          "audioTimestamp": 7,
+          "audioEndTimestamp": 11
+        },
+        {
+          "number": 4,
+          "textArabic": "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ",
+          "textUthmani": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِي ٱلۡعُقَدِ",
+          "tafsirKurdish": "و لە خراپەی ئەوانەی فوو دەکەن لە گرێکان (سیحرکاران).",
+          "audioTimestamp": 11,
+          "audioEndTimestamp": 15
+        },
+        {
+          "number": 5,
+          "textArabic": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+          "textUthmani": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+          "tafsirKurdish": "و لە خراپەی بەغیل کاتێک بەغیلایەتی دەکات.",
+          "audioTimestamp": 15,
+          "audioEndTimestamp": 19
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "number": 114,
+      "nameArabic": "الناس",
+      "nameKurdish": "ناس",
+      "meaningKurdish": "خەڵک",
+      "verseCount": 6,
+      "revelationType": "مەککی",
+      "juz": 30,
+      "audioUrl": "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/114.mp3",
+      "audioDuration": 22,
+      "hasLessons": true,
+      "verses": [
+        {
+          "number": 1,
+          "textArabic": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "textUthmani": "قُلۡ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+          "tafsirKurdish": "بڵێ: پەنا دەبەم بۆ پەروەردگاری خەڵکی.",
+          "audioTimestamp": 0,
+          "audioEndTimestamp": 4
+        },
+        {
+          "number": 2,
+          "textArabic": "مَلِكِ النَّاسِ",
+          "textUthmani": "مَلِكِ ٱلنَّاسِ",
+          "tafsirKurdish": "پاشای خەڵکی.",
+          "audioTimestamp": 4,
+          "audioEndTimestamp": 7
+        },
+        {
+          "number": 3,
+          "textArabic": "إِلَٰهِ النَّاسِ",
+          "textUthmani": "إِلَٰهِ ٱلنَّاسِ",
+          "tafsirKurdish": "خوای خەڵکی.",
+          "audioTimestamp": 7,
+          "audioEndTimestamp": 10
+        },
+        {
+          "number": 4,
+          "textArabic": "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ",
+          "textUthmani": "مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ",
+          "tafsirKurdish": "لە خراپەی وەسوەسەکەری پاشگەزبووەوە.",
+          "audioTimestamp": 10,
+          "audioEndTimestamp": 14
+        },
+        {
+          "number": 5,
+          "textArabic": "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ",
+          "textUthmani": "ٱلَّذِي يُوَسۡوِسُ فِي صُدُورِ ٱلنَّاسِ",
+          "tafsirKurdish": "ئەوەی وەسوەسە دەخاتە سینگی خەڵکەوە.",
+          "audioTimestamp": 14,
+          "audioEndTimestamp": 18
+        },
+        {
+          "number": 6,
+          "textArabic": "مِنَ الْجِنَّةِ وَالنَّاسِ",
+          "textUthmani": "مِنَ ٱلۡجِنَّةِ وَٱلنَّاسِ",
+          "tafsirKurdish": "چ لە جن بێت و چ لە مرۆڤ.",
+          "audioTimestamp": 18,
+          "audioEndTimestamp": 22
+        }
+      ]
+    }
+  ],
+
+  "tafsirBooks": [
+    {
+      "id": "tafsir-001",
+      "title": "تەفسیری ئیبن کەسیر",
+      "author": "ئیمام ئیبن کەسیر",
+      "coverColor": "#064e3b",
+      "description": "تەفسیرێکی ناوداری سەلەفی کە لەسەر بنەمای تەفسیری قوڕئان بە قوڕئان و فەرموودە دانراوە. یەکێکە لە سەرچاوە سەرەکییەکانی تەفسیر لە جیهانی ئیسلامیدا.",
+      "pageCount": 1500,
+      "language": "عەرەبی - کوردی",
+      "rating": 5
+    },
+    {
+      "id": "tafsir-002",
+      "title": "تەفسیری سەعدی",
+      "author": "شێخ عبدالڕەحمان السەعدی",
+      "coverColor": "#7c3aed",
+      "description": "تەفسیرێکی گونجاو و ئاسان بۆ خوێندنەوە، گرنگی بە دەرخستنی سوود و حیکمەتەکانی ئایەتەکان دەدات بە شێوەیەکی ڕوون و سادە.",
+      "pageCount": 1000,
+      "language": "عەرەبی - کوردی",
+      "rating": 5
+    },
+    {
+      "id": "tafsir-003",
+      "title": "تەفسیری قورتوبی",
+      "author": "ئیمام قورتوبی",
+      "coverColor": "#dc2626",
+      "description": "تەفسیرێکی بەرفراوان کە تایبەتمەندە بە دەرخستنی حوکمە فیقهییەکانی قوڕئان و ڕوونکردنەوەی بابەتە شەرعییەکان.",
+      "pageCount": 2000,
+      "language": "عەرەبی",
+      "rating": 5
+    },
+    {
+      "id": "tafsir-004",
+      "title": "تەفسیری تەبەری",
+      "author": "ئیمام تەبەری",
+      "coverColor": "#0891b2",
+      "description": "یەکێک لە کۆنترین و سەرچاوەیی ترین تەفسیرەکانە کە لەسەر بنەمای ڕیوایەت و زنجیرەی ڕاوێژکاران دانراوە.",
+      "pageCount": 2500,
+      "language": "عەرەبی",
+      "rating": 5
+    }
+  ],
+
+  "navigation": [
+    {
+      "id": "home",
+      "route": "/",
+      "label": "سەرەکی",
+      "icon": "home"
+    },
+    {
+      "id": "audio-lessons",
+      "route": "/audio-lessons",
+      "label": "وانە دەنگییەکان",
+      "icon": "headphones"
+    },
+    {
+      "id": "books",
+      "route": "/books",
+      "label": "کتێب",
+      "icon": "book",
+      "comingSoon": true
+    },
+    {
+      "id": "tafsir-reviews",
+      "route": "/tafsir-reviews",
+      "label": "ناساندنی تەفسیرەکان",
+      "icon": "star"
+    },
+    {
+      "id": "about",
+      "route": "/about",
+      "label": "دەربارە",
+      "icon": "info"
+    }
+  ],
+
+  "uiStrings": {
+    "search": "گەڕان",
+    "searchPlaceholder": "گەڕان لە وانەکان و تەفسیرەکان...",
+    "play": "لێدان",
+    "pause": "وەستان",
+    "loading": "چاوەڕوان بە...",
+    "comingSoon": "بەم زووانە",
+    "noResults": "هیچ ئەنجامێک نەدۆزرایەوە",
+    "speed": "خێرایی",
+    "verse": "ئایەت",
+    "surah": "سورە",
+    "juz": "جوز",
+    "verses": "ئایەت",
+    "mecca": "مەککی",
+    "medina": "مەدەنی",
+    "listenNow": "گوێبیستی بکە",
+    "readMore": "زیاتر بخوێنە",
+    "methodology": "مەنهەجمان",
+    "lessonStyle": "شێوازی وانەکان",
+    "aboutProject": "دەربارەی پڕۆژەکە",
+    "aboutTeacher": "دەربارەی ماموستا",
+    "toTheLessons": "بۆ وانەکان",
+    "followUs": "بەدوایماندا بێ لە",
+    "allSurahs": "هەموو سورەکان",
+    "availableLessons": "وانەی بەردەستە",
+    "noLessonsYet": "هێشتا وانەی ئامادە نییە",
+    "back": "گەڕانەوە",
+    "reviews": "پێداچوونەوە",
+    "pages": "پەڕە"
+  }
+}

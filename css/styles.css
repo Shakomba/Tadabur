@@ -1,0 +1,752 @@
+/* ===== Base Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Hero Gradient ===== */
+.hero-gradient {
+  background: radial-gradient(
+    ellipse at center top,
+    #064e3b 0%,
+    #022c22 70%,
+    #011a15 100%
+  );
+}
+
+/* Enhanced Hero Spotlight Effect */
+.hero-spotlight {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(
+    circle at center,
+    rgba(232, 200, 149, 0.25) 0%,
+    rgba(212, 169, 86, 0.18) 20%,
+    rgba(16, 185, 129, 0.12) 40%,
+    rgba(6, 78, 59, 0.08) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== Quranic Text Styling ===== */
+.quran-text {
+  font-family: 'Amiri', serif;
+  word-spacing: 0.15em;
+  letter-spacing: 0.02em;
+}
+
+/* ===== Verse Container ===== */
+.verse-container {
+  background: #faf6f0;
+  border: 1px solid #f0e4cf;
+}
+
+/* ===== Verse Item ===== */
+.verse-item {
+  transition: all 0.3s ease-out;
+  transform: translateZ(0);
+}
+
+.verse-item:hover {
+  background-color: rgba(6, 78, 59, 0.05);
+}
+
+.verse-item.highlighted {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  box-shadow: 0 4px 20px rgba(6, 78, 59, 0.15);
+  transform: translateZ(0) scale(1.01);
+}
+
+.verse-item.highlighted .verse-number {
+  background-color: #064e3b;
+  color: white;
+}
+
+/* ===== 3D Book Card ===== */
+.book-card {
+  perspective: 1000px;
+}
+
+.book-cover {
+  transform-style: preserve-3d;
+  transform: rotateY(-15deg) rotateX(5deg);
+  transition: transform 0.4s ease;
+  box-shadow:
+    10px 10px 30px rgba(0, 0, 0, 0.25),
+    1px 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.book-card:hover .book-cover {
+  transform: rotateY(-5deg) rotateX(2deg) translateY(-10px);
+}
+
+.book-spine {
+  position: absolute;
+  right: 100%;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  transform: rotateY(90deg);
+  transform-origin: right center;
+}
+
+.book-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 10px;
+  transform: rotateX(-90deg);
+  transform-origin: top center;
+  background: linear-gradient(to right, #e5e7eb, #f3f4f6, #e5e7eb);
+}
+
+/* ===== Audio Player Bar ===== */
+.audio-bar {
+  background: linear-gradient(180deg, #064e3b 0%, #022c22 100%);
+  border-top: 3px solid #d4a956;
+  will-change: transform;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+}
+
+.audio-bar.visible {
+  transform: translateY(0);
+}
+
+/* ===== Progress Bar ===== */
+.progress-track {
+  cursor: pointer;
+}
+
+.progress-fill {
+  transition: width 0.1s linear;
+}
+
+.progress-handle {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.progress-track:hover .progress-handle {
+  opacity: 1;
+}
+
+/* ===== Navigation Tab ===== */
+.nav-tab {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  right: 50%;
+  height: 2px;
+  background-color: #d4a956;
+  transition: all 0.2s ease;
+}
+
+.nav-tab:hover::after,
+.nav-tab.active::after {
+  left: 0;
+  right: 0;
+}
+
+.nav-tab.active {
+  color: #d4a956;
+}
+
+/* ===== Search Input ===== */
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 169, 86, 0.5);
+}
+
+/* ===== Button Styles ===== */
+.btn-primary {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #faf6f0 0%, #f5ede0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  border: 2px solid #d4a956;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(212, 169, 86, 0.1);
+}
+
+/* ===== Social Buttons ===== */
+.social-btn {
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.social-btn.telegram {
+  background: linear-gradient(135deg, #0088cc 0%, #0077b5 100%);
+}
+
+.social-btn.youtube {
+  background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+}
+
+/* ===== Surah Card ===== */
+.surah-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.surah-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(6, 78, 59, 0.15);
+}
+
+/* ===== Teacher Card ===== */
+.teacher-card {
+  transition: all 0.3s ease;
+}
+
+.teacher-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Speed Dropdown ===== */
+.speed-dropdown {
+  position: relative;
+}
+
+.speed-options {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #022c22;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  min-width: 80px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.speed-dropdown:hover .speed-options,
+.speed-options.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.speed-option {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.speed-option:hover {
+  background-color: rgba(212, 169, 86, 0.2);
+}
+
+.speed-option.active {
+  color: #d4a956;
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf6f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4a956;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c49a4b;
+}
+
+/* ===== Animation Keyframes ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-highlight {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(6, 78, 59, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(6, 78, 59, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.animate-pulse-highlight {
+  animation: pulse-highlight 1s ease-in-out;
+}
+
+/* ===== Staggered Animation ===== */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* ===== Hardware Acceleration ===== */
+.gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ===== Mobile Menu ===== */
+.mobile-menu {
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== Coming Soon Badge ===== */
+.coming-soon-badge {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* ===== Loading Spinner ===== */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #d4a956;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== RTL Fixes ===== */
+[dir="rtl"] input[type="range"] {
+  direction: ltr;
+}
+
+/* ===== Safe Area Padding for iOS ===== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .audio-bar {
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .audio-bar,
+  #header,
+  #audio-player {
+    display: none !important;
+  }
+}
+
+/* ===== Logo Effects ===== */
+.logo-glow {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))
+          drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+}
+
+.logo-glow-subtle {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.25))
+          drop-shadow(0 0 15px rgba(255, 255, 255, 0.15));
+}
+
+/* Hero Logo Effect - Subtle depth and separation */
+.hero-logo {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3))
+          drop-shadow(0 8px 24px rgba(0, 0, 0, 0.2))
+          drop-shadow(0 0 40px rgba(212, 169, 86, 0.15));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PERSISTENT AUDIO PLAYER STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Full Audio Bar (Docked Bottom)
+   ───────────────────────────────────────────────────────────────────────── */
+.audio-bar-full {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, #064e3b, #022c22);
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+  border-top: 2px solid #d4a956;
+  padding: 1rem 0;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  will-change: transform;
+}
+
+.audio-bar-full.audio-bar-visible {
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Progress Bar with Verse Markers
+   ───────────────────────────────────────────────────────────────────────── */
+.progress-bar-wrapper {
+  position: relative;
+}
+
+.progress-fill {
+  pointer-events: none;
+}
+
+/* Verse Markers */
+.verse-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  cursor: pointer;
+  z-index: 10;
+  transform: translateX(50%);
+}
+
+.verse-marker-line {
+  width: 100%;
+  height: 100%;
+  background: rgba(250, 246, 240, 0.4);
+  transition: all 0.15s ease;
+}
+
+.verse-marker:hover .verse-marker-line {
+  background: #d4a956;
+  width: 3px;
+  margin-left: -0.5px;
+}
+
+/* Verse Marker Tooltip */
+.verse-marker-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #022c22;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 169, 86, 0.3);
+  z-index: 20;
+}
+
+.verse-marker-tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: -1px;
+  border: 6px solid transparent;
+  border-top-color: #022c22;
+}
+
+.verse-marker:hover .verse-marker-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Floating Action Button (FAB) - Minimized Mode
+   ───────────────────────────────────────────────────────────────────────── */
+.audio-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .audio-fab {
+    bottom: 1rem;
+    left: 1rem;
+  }
+}
+
+/* FAB Pulse Ring Animation (when playing) */
+.audio-fab.fab-playing .fab-ring {
+  animation: fab-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes fab-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
+}
+
+/* FAB Tooltip */
+.fab-tooltip {
+  z-index: 1001;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Speed Dropdown
+   ───────────────────────────────────────────────────────────────────────── */
+.speed-options {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #022c22;
+  border: 1px solid rgba(212, 169, 86, 0.3);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0;
+  min-width: 80px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.speed-options.speed-options-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.speed-option {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-align: center;
+  color: #f5ede0;
+}
+
+.speed-option:hover {
+  background-color: rgba(212, 169, 86, 0.2);
+  color: #d4a956;
+}
+
+.speed-option.active {
+  color: #d4a956;
+  font-weight: bold;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Volume Slider (Custom styling)
+   ───────────────────────────────────────────────────────────────────────── */
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.volume-slider::-webkit-slider-track {
+  height: 4px;
+  background: #065f46;
+  border-radius: 2px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #d4a956;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+  background: #e8c895;
+  transform: scale(1.1);
+}
+
+/* Firefox */
+.volume-slider::-moz-range-track {
+  height: 4px;
+  background: #065f46;
+  border-radius: 2px;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #d4a956;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+  background: #e8c895;
+  transform: scale(1.1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Active Ayah Highlighting (Reading View)
+   ───────────────────────────────────────────────────────────────────────── */
+.active-ayah {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  box-shadow: 0 4px 20px rgba(212, 169, 86, 0.3) !important;
+  transform: translateZ(0) scale(1.01);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: ayah-glow 1.5s ease-in-out;
+  border-right: 4px solid #d4a956;
+}
+
+@keyframes ayah-glow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(212, 169, 86, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(212, 169, 86, 0.5);
+  }
+}
+
+.active-ayah .verse-number {
+  background-color: #064e3b !important;
+  color: white !important;
+  border-color: #d4a956 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Responsive Adjustments
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .audio-bar-full {
+    padding: 0.75rem 0;
+  }
+  
+  .progress-bar-wrapper {
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Print Styles
+   ───────────────────────────────────────────────────────────────────────── */
+@media print {
+  .audio-bar-full,
+  .audio-fab {
+    display: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Accessibility
+   ───────────────────────────────────────────────────────────────────────── */
+.audio-bar-full button:focus,
+.audio-fab button:focus,
+.verse-marker:focus {
+  outline: 2px solid #d4a956;
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Hardware Acceleration
+   ───────────────────────────────────────────────────────────────────────── */
+.audio-bar-full,
+.audio-fab,
+.progress-fill,
+.active-ayah {
+  will-change: transform;
+  transform: translateZ(0);
+}
+

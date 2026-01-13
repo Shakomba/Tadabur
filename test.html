@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Data Loading</title>
+</head>
+<body>
+  <h1>Testing Data Load</h1>
+  <div id="output"></div>
+  
+  <script>
+    async function test() {
+      const output = document.getElementById('output');
+      try {
+        output.innerHTML = 'Loading data.json...<br>';
+        const response = await fetch('data/data.json');
+        output.innerHTML += 'Status: ' + response.status + '<br>';
+        const data = await response.json();
+        output.innerHTML += 'Success! Loaded ' + data.surahs.length + ' surahs<br>';
+        output.innerHTML += 'Meta: ' + JSON.stringify(data.meta) + '<br>';
+      } catch (error) {
+        output.innerHTML += 'Error: ' + error.message + '<br>';
+        console.error(error);
+      }
+    }
+    test();
+  </script>
+</body>
+</html>
