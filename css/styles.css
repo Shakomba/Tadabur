@@ -90,14 +90,16 @@ body {
 }
 
 .verse-item.verse-disabled {
-  opacity: 0.45;
   pointer-events: none;
-  filter: grayscale(0.2);
+  cursor: default !important;
 }
 
-.verse-item.verse-disabled .verse-number {
-  background-color: #e5e7eb;
-  color: #9ca3af;
+.verse-item:not(.verse-disabled) {
+  cursor: pointer !important;
+}
+
+.verse-item:not(.verse-disabled):hover {
+  background-color: rgba(6, 78, 59, 0.03);
 }
 
 .lecture-accordion.is-active .lecture-header {
@@ -489,6 +491,17 @@ body {
   }
 }
 
+@keyframes playing-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
@@ -499,6 +512,52 @@ body {
 
 .animate-pulse-highlight {
   animation: pulse-highlight 1s ease-in-out;
+}
+
+/* Audio Visualizer */
+.audio-visualizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 20px;
+}
+
+.audio-visualizer .bar {
+  width: 3px;
+  background: currentColor;
+  border-radius: 2px;
+  animation: visualizer 0.8s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.audio-visualizer .bar:nth-child(1) {
+  animation-delay: 0s;
+  animation-duration: 0.6s;
+}
+
+.audio-visualizer .bar:nth-child(2) {
+  animation-delay: 0.15s;
+  animation-duration: 0.8s;
+}
+
+.audio-visualizer .bar:nth-child(3) {
+  animation-delay: 0.3s;
+  animation-duration: 0.7s;
+}
+
+.audio-visualizer .bar:nth-child(4) {
+  animation-delay: 0.45s;
+  animation-duration: 0.9s;
+}
+
+@keyframes visualizer {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 18px;
+  }
 }
 
 /* ===== Staggered Animation ===== */

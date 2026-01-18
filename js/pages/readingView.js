@@ -59,9 +59,21 @@ const ReadingViewPage = {
     if (this.hasLectures) {
       this._setupLectureHandlers();
     } else {
+      // For single-lecture surahs, set up play button handler
+      const playButton = this.container.querySelector('#single-surah-play');
+      if (playButton) {
+        playButton.addEventListener('click', () => {
+          const audioState = State.get('audioState');
+          // Toggle play/pause
+          if (audioState && audioState.playing) {
+            AudioPlayer.pause();
+          } else {
+            this._playSingleSurah();
+          }
+        });
+      }
       this._setupVerseClickHandlers();
-      // Load audio and set up sync
-      this._setupAudio();
+      // Don't load audio immediately - wait for user to click play button
     }
   },
 
@@ -89,8 +101,10 @@ const ReadingViewPage = {
               </a>
 
               <div class="flex-1">
-                <div class="flex flex-wrap items-center gap-2 text-emerald-700 text-sm md:text-base">
-                  <span class="font-quran text-lg md:text-xl text-emerald-800">${this.surah.nameArabic}</span>
+                <div class="flex flex-wrap items-center gap-2 text-emerald-700 text-sm md:text-base" style="font-family: 'Vazirmatn', sans-serif;">
+                  <span class="font-medium text-emerald-800">${toKurdishNumber(this.surah.number)}</span>
+                  <span class="text-emerald-400">•</span>
+                  <span class="font-medium text-emerald-800">${this.surah.nameArabic}</span>
                   <span class="text-emerald-400">•</span>
                   <span class="font-medium">${this.surah.revelationType}</span>
                   <span class="text-emerald-400">•</span>
@@ -98,10 +112,22 @@ const ReadingViewPage = {
                 </div>
               </div>
 
-              <!-- Surah Number Badge -->
-              <div class="w-12 h-12 bg-gold-500 rounded-xl flex items-center justify-center">
-                <span class="text-xl font-bold text-emerald-900">${toKurdishNumber(this.surah.number)}</span>
-              </div>
+              ${!this.hasLectures ? `
+              <!-- Play Button (for single-lecture surahs) -->
+              <button id="single-surah-play"
+                 class="w-10 h-10 bg-gold-500 hover:bg-gold-400 text-emerald-900 rounded-full
+                        flex items-center justify-center transition-colors">
+                <span class="play-icon">${icon('play', 'w-5 h-5')}</span>
+                <span class="visualizer-icon hidden">
+                  <div class="audio-visualizer text-emerald-900">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                  </div>
+                </span>
+              </button>
+              ` : ''}
             </div>
           </div>
         </div>
@@ -124,9 +150,10 @@ const ReadingViewPage = {
    */
   _renderVerse(verse, index) {
     return `
-      <div class="verse-item p-4 md:p-6 rounded-xl cursor-pointer mb-4 last:mb-0"
+      <div class="verse-item verse-disabled p-4 md:p-6 rounded-xl mb-4 last:mb-0"
            data-verse-index="${index}"
-           id="verse-${index}">
+           id="verse-${index}"
+           style="cursor: default;">
         <div class="flex items-start gap-4">
           <!-- Verse Number -->
           <div class="verse-number w-10 h-10 md:w-12 md:h-12 bg-emerald-100 text-emerald-800
@@ -195,7 +222,15 @@ const ReadingViewPage = {
             <div class="lecture-actions flex items-center">
               <button class="lecture-play w-11 h-11 bg-gold-400 hover:bg-gold-300 rounded-full flex items-center justify-center transition-colors"
                       data-lecture-play="${lectureId}" title="${strings.listenNow || 'گوشبکە'}" aria-label="Play lecture" type="button">
-                ${icon('play', 'w-5 h-5 text-emerald-900')}
+                <span class="play-icon">${icon('play', 'w-5 h-5 text-emerald-900')}</span>
+                <span class="visualizer-icon hidden">
+                  <div class="audio-visualizer text-emerald-900">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                  </div>
+                </span>
               </button>
             </div>
           </div>
@@ -249,6 +284,22 @@ const ReadingViewPage = {
   },
 
   /**
+   * Play single-lecture surah (no lecture divisions)
+   */
+  _playSingleSurah() {
+    if (!this.surah.audioUrl) return;
+
+    // Set up audio and sync
+    this._setupAudio();
+
+    // Play audio
+    AudioPlayer.play();
+
+    // Enable verse clicks
+    this._enableVerseClicks();
+  },
+
+  /**
    * Set up audio player and sync
    */
   _setupAudio() {
@@ -264,6 +315,28 @@ const ReadingViewPage = {
         this._onVerseChange(verseIndex);
       });
     }
+  },
+
+  /**
+   * Enable verse clicks and update cursor
+   */
+  _enableVerseClicks() {
+    const verses = this.container.querySelectorAll('.verse-item');
+    verses.forEach(verse => {
+      verse.classList.remove('verse-disabled');
+      verse.style.cursor = 'pointer';
+    });
+  },
+
+  /**
+   * Disable verse clicks and update cursor
+   */
+  _disableVerseClicks() {
+    const verses = this.container.querySelectorAll('.verse-item');
+    verses.forEach(verse => {
+      verse.classList.add('verse-disabled');
+      verse.style.cursor = 'default';
+    });
   },
 
   /**
@@ -289,14 +362,27 @@ const ReadingViewPage = {
       playButton.addEventListener('click', (e) => {
         e.stopPropagation();
         const lectureId = playButton.dataset.lecturePlay;
-        this._playLecture(lectureId);
+
+        // If clicking the currently playing lecture, pause it
+        if (this.activeLectureId === lectureId && playButton.classList.contains('is-playing')) {
+          AudioPlayer.pause();
+          this._resetLectureState();
+        } else {
+          // Otherwise play the lecture
+          this._playLecture(lectureId);
+        }
       });
     });
 
     const accordions = this.container.querySelectorAll('.lecture-accordion');
     accordions.forEach(accordion => {
       accordion.addEventListener('click', (event) => {
+        // Ignore if clicking play button
         if (event.target.closest('[data-lecture-play]')) return;
+
+        // Ignore if clicking a verse item (whether enabled or disabled)
+        if (event.target.closest('.verse-item')) return;
+
         const lectureId = accordion.dataset.lectureId;
         this._toggleLecture(lectureId);
       });
@@ -354,6 +440,16 @@ const ReadingViewPage = {
     const lecture = this.lectureMetaMap[lectureId];
     if (!lecture) return;
 
+    // If switching to a different lecture, pause current audio and reset highlights
+    if (this.activeLectureId && this.activeLectureId !== lectureId) {
+      AudioPlayer.pause();
+      // Clear highlights
+      this.container.querySelectorAll('.verse-item.highlighted').forEach((element) => {
+        element.classList.remove('highlighted');
+      });
+      this.currentVerseIndex = -1;
+    }
+
     this._openLecture(lectureId);
     this._setActiveLecture(lectureId);
 
@@ -370,6 +466,9 @@ const ReadingViewPage = {
     }
 
     AudioPlayer.play();
+
+    // Update play button appearance for all lectures
+    this._updateLecturePlayButtons();
   },
 
   _buildLectureSurah(lectureId, lecture) {
@@ -383,9 +482,18 @@ const ReadingViewPage = {
   },
 
   _onAudioStateChange(state) {
-    if (!this.hasLectures) return;
-    if (!state.loaded && !state.playing) {
-      this._resetLectureState();
+    if (this.hasLectures) {
+      if (!state.loaded && !state.playing) {
+        this._resetLectureState();
+      }
+    } else {
+      // For single-lecture surahs
+      this._updateSingleSurahPlayButton(state.playing);
+
+      // Disable clicks when audio stops
+      if (!state.loaded && !state.playing) {
+        this._disableVerseClicks();
+      }
     }
   },
 
@@ -396,6 +504,46 @@ const ReadingViewPage = {
     this.container.querySelectorAll('.verse-item.highlighted').forEach((element) => {
       element.classList.remove('highlighted');
     });
+    this._updateLecturePlayButtons();
+  },
+
+  _updateLecturePlayButtons() {
+    // Reset all buttons to show play icon
+    this.container.querySelectorAll('.lecture-play').forEach(btn => {
+      btn.classList.remove('is-playing');
+      const playIcon = btn.querySelector('.play-icon');
+      const visualizerIcon = btn.querySelector('.visualizer-icon');
+      if (playIcon) playIcon.classList.remove('hidden');
+      if (visualizerIcon) visualizerIcon.classList.add('hidden');
+    });
+
+    // Show visualizer for active lecture button
+    if (this.activeLectureId) {
+      const activeButton = this.container.querySelector(`[data-lecture-play="${this.activeLectureId}"]`);
+      if (activeButton) {
+        activeButton.classList.add('is-playing');
+        const playIcon = activeButton.querySelector('.play-icon');
+        const visualizerIcon = activeButton.querySelector('.visualizer-icon');
+        if (playIcon) playIcon.classList.add('hidden');
+        if (visualizerIcon) visualizerIcon.classList.remove('hidden');
+      }
+    }
+  },
+
+  _updateSingleSurahPlayButton(isPlaying) {
+    const playButton = this.container.querySelector('#single-surah-play');
+    if (!playButton) return;
+
+    const playIcon = playButton.querySelector('.play-icon');
+    const visualizerIcon = playButton.querySelector('.visualizer-icon');
+
+    if (isPlaying) {
+      if (playIcon) playIcon.classList.add('hidden');
+      if (visualizerIcon) visualizerIcon.classList.remove('hidden');
+    } else {
+      if (playIcon) playIcon.classList.remove('hidden');
+      if (visualizerIcon) visualizerIcon.classList.add('hidden');
+    }
   },
 
   /**
