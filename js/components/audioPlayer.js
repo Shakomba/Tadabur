@@ -456,8 +456,14 @@ const AudioPlayer = {
     const container = $('#verse-markers', this.container);
     if (!container || !verses || !duration) return;
 
-    const strings = State.get('appData')?.uiStrings || {};
-    const verseLabel = (!strings.verse || /^[?]+$/.test(strings.verse)) ? 'ئایەت' : strings.verse;
+    const verseLabel = 'ئایەتی';
+    const formatVerseNumbers = (numbers = []) => {
+      const unique = [...new Set(numbers.map((num) => Number(num)).filter((num) => Number.isFinite(num)))];
+      const localized = unique.map((num) => toKurdishNumber(num));
+      if (localized.length <= 1) return localized[0] || '';
+      if (localized.length === 2) return `${localized[0]} و ${localized[1]}`;
+      return `${localized.slice(0, -1).join('، ')} و ${localized[localized.length - 1]}`;
+    };
 
     const markers = getVerseMarkers(verses, duration);
     this.markers = markers;
@@ -471,7 +477,7 @@ const AudioPlayer = {
            data-verse="${marker.index}">
         <div class="verse-marker-line"></div>
         <div class="verse-marker-tooltip">
-          ${verseLabel} ${toKurdishNumber(marker.verseNumber)}
+          ${verseLabel} ${formatVerseNumbers(marker.verseNumbers || [marker.verseNumber])}
         </div>
       </div>
     `).join('');
@@ -498,9 +504,15 @@ const AudioPlayer = {
         }, 1200);
       });
       const verseIndex = parseInt(marker.dataset.verse, 10);
-      if (Number.isInteger(verseIndex)) {
-        this.markerElements.set(verseIndex, marker);
-      }
+      const markerData = markers.find((item) => item.index === verseIndex);
+      const verseIndices = Array.isArray(markerData?.verseIndices) && markerData.verseIndices.length
+        ? markerData.verseIndices
+        : [verseIndex];
+      verseIndices.forEach((idx) => {
+        if (Number.isInteger(idx)) {
+          this.markerElements.set(idx, marker);
+        }
+      });
     });
   },
 

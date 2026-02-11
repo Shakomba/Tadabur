@@ -1,0 +1,7 @@
+# Local temp/runtime files
+server.log
+tmpclaude-*-cwd
+test_write.txt
+*.backup.js
+*_new.js
+

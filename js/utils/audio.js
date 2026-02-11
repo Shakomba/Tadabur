@@ -210,11 +210,31 @@ export function getVerseMarkers(verses, totalDuration) {
   const timings = getValidTimings(verses);
   if (!timings.length) return [];
 
-  return timings.map((timing) => ({
-    index: timing.index,
-    position: (timing.start / totalDuration) * 100,
-    verseNumber: verses[timing.index].number ?? verses[timing.index].numberInSurah ?? timing.index + 1
-  }));
+  // Group verse indices by identical start timestamps so tooltips can show
+  // all verses that share the same marker position.
+  const indicesByStart = new Map();
+  timings.forEach((timing) => {
+    if (!indicesByStart.has(timing.start)) {
+      indicesByStart.set(timing.start, []);
+    }
+    indicesByStart.get(timing.start).push(timing.index);
+  });
+
+  // Render one marker per unique timestamp while keeping all linked verses.
+  return Array.from(indicesByStart.entries())
+    .map(([start, verseIndices]) => {
+      const primaryIndex = verseIndices[0];
+      return {
+        index: primaryIndex,
+        verseIndices,
+        position: (start / totalDuration) * 100,
+        verseNumber: verses[primaryIndex].number ?? verses[primaryIndex].numberInSurah ?? primaryIndex + 1,
+        verseNumbers: verseIndices.map((verseIndex) =>
+          verses[verseIndex].number ?? verses[verseIndex].numberInSurah ?? verseIndex + 1
+        )
+      };
+    })
+    .sort((a, b) => a.position - b.position);
 }
 
 /**

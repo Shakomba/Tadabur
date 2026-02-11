@@ -809,9 +809,16 @@ const ReadingViewPage = {
     if (this.autoScrollTimeout) {
       clearTimeout(this.autoScrollTimeout);
     }
-    verseElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
+    const rect = verseElement.getBoundingClientRect();
+    const verseCenter = rect.top + (rect.height / 2);
+    const viewportCenter = window.innerHeight / 2;
+    // Positive bias scrolls a bit more down, placing the active verse slightly above center.
+    const extraScrollBias = 80;
+    const targetTop = window.scrollY + (verseCenter - viewportCenter) + extraScrollBias;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: 'smooth'
     });
     this.autoScrollTimeout = setTimeout(() => {
       this.isAutoScrolling = false;
