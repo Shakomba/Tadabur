@@ -1,13 +1,13 @@
 {
   "meta": {
     "appName": "تەدەبوری قورئان",
-    "appNameLatin": "Tadabburi Quran",
+    "appNameLatin": "Tadabbury Quran",
     "tagline": "تەفسیرکردنی قوڕئان بەپێی مەنهەجی سەلەف و زمانی عەرەبی؛ گەشتێک بۆ قوڵبوونەوە لە پەیامی خودا.",
     "version": "1.0.0"
   },
   "socialLinks": {
     "telegram": "https://t.me/t_qur4n",
-    "youtube": "https://www.youtube.com/@TadabburiQuran"
+    "youtube": "https://www.youtube.com/@TadabburyQuran"
   },
   "teacher": {
     "name": "سیروان حامد",

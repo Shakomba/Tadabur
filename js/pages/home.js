@@ -42,10 +42,10 @@ const HomePage = {
       <!-- Hero Section -->
       <section class="hero-section min-h-[75vh] flex items-center justify-center relative overflow-hidden">
         <div class="relative z-10 text-center px-4 py-16 hero-content-fade">
-          <!-- Logo with Glow -->
+          <!-- Logo -->
           <div class="mb-8 relative inline-block">
             <img src="assets/images/TadabburLogo.png" alt="${meta.appName}"
-                 class="w-48 h-48 md:w-56 md:h-56 drop-shadow-[0_0_60px_rgba(212,175,55,0.15)]">
+                 class="w-48 h-48 md:w-56 md:h-56">
           </div>
 
           <!-- Title -->
