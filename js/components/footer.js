@@ -85,7 +85,7 @@ const Footer = {
 
           <div class="border-t border-cream-100/20 pt-4 text-center">
             <p class="text-cream-200 text-sm" dir="rtl">
-              ئەم پرۆژەیە بەشێکە لە <a href="https://newhalabja.org" target="_blank" rel="noopener noreferrer" class="text-gold-300 hover:text-gold-200 transition-colors">بنکەی هەڵەبجەی تازە</a>
+              ئەم پرۆژەیە بەشێکە لە <a href="https://bnkayhalabjaytaza.org" target="_blank" rel="noopener noreferrer" class="text-gold-300 hover:text-gold-200 transition-colors">بنکەی هەڵەبجەی تازە</a>
             </p>
             <p class="text-cream-200 text-xs mt-2" dir="rtl">
               هەموو مافەکان پارێزراون © ${new Date().getFullYear()}
